@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+* {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Force scrollbar styling for CEF */
+html, body {
+  scrollbar-width: thin !important;
+  scrollbar-color: #012169 rgba(10, 18, 32, 0.8) !important;
+}
+
+/* Webkit scrollbar - global override */
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 18, 32, 0.9) !important;
+  border-radius: 4px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #012169 0%, #1e3a5f 100%) !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(30, 58, 95, 0.6) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #1e3a5f 0%, #2a4a6f 100%) !important;
+}
+
+::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(10, 18, 32, 0.9) !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
