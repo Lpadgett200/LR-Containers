@@ -1,5 +1,10 @@
 fx_version 'cerulean'
 game 'gta5'
+lua54 'yes'
+
+author 'LR Development'
+description 'Container'
+version '1.0.0'
 
 shared_scripts { 'config.lua' }
 ui_page 'web/dist/index.html'
