@@ -1,8 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
--- Initialize database tables
 CreateThread(function()
-    -- Create storages table
     MySQL.query.await([[
         CREATE TABLE IF NOT EXISTS storages (
             id INT PRIMARY KEY,
@@ -14,7 +12,6 @@ CreateThread(function()
         )
     ]])
 
-    -- Create auctions table
     MySQL.query.await([[
         CREATE TABLE IF NOT EXISTS storage_auctions (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,7 +28,6 @@ CreateThread(function()
         )
     ]])
 
-    -- Insert default storages if they don't exist
     for _, storage in ipairs(Config.Storages) do
         MySQL.query.await([[
             INSERT IGNORE INTO storages (id, name, price) VALUES (?, ?, ?)
@@ -41,7 +37,6 @@ CreateThread(function()
     print('[storages] Database initialized')
 end)
 
--- Get all storages with ownership info
 RegisterNetEvent('storages:server:getStorages', function()
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
@@ -58,7 +53,6 @@ RegisterNetEvent('storages:server:getStorages', function()
         ORDER BY s.name ASC
     ]])
 
-    -- Add coords from config
     for _, storage in ipairs(storages) do
         for _, cfgStorage in ipairs(Config.Storages) do
             if cfgStorage.id == storage.id then
@@ -75,7 +69,6 @@ RegisterNetEvent('storages:server:getStorages', function()
     })
 end)
 
--- Buy a storage
 RegisterNetEvent('storages:server:buyStorage', function(storageId)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
