@@ -3,7 +3,6 @@ local ownedStorages = {}
 local blips = {}
 local storagePed = nil
 
--- Create the storage manager ped
 local function createStoragePed()
     print('[LR-Containers] Creating storage ped...')
     
@@ -47,7 +46,6 @@ local function createStoragePed()
         TaskStartScenarioInPlace(storagePed, Config.Ped.scenario, 0, true)
     end
 
-    -- Add ox_target interaction
     exports.ox_target:addLocalEntity(storagePed, {
         {
             name = 'storage_manager',
@@ -60,10 +58,9 @@ local function createStoragePed()
         }
     })
 
-    -- Create blip for the ped location
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite(blip, 500)
-    SetBlipColour(blip, 2) -- Green
+    SetBlipColour(blip, 2) 
     SetBlipScale(blip, 0.8)
     SetBlipAsShortRange(blip, true)
     BeginTextCommandSetBlipName("STRING")
@@ -71,13 +68,11 @@ local function createStoragePed()
     EndTextCommandSetBlipName(blip)
 end
 
--- Load owned storages on resource start
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     TriggerServerEvent('storages:server:getOwnedStorages')
     createStoragePed()
 end)
 
--- Also load on resource start if already logged in
 CreateThread(function()
     Wait(1000)
     if LocalPlayer.state.isLoggedIn then
@@ -86,22 +81,19 @@ CreateThread(function()
     end
 end)
 
--- Receive owned storages and create blips
 RegisterNetEvent('storages:client:receiveOwnedStorages', function(storages)
     ownedStorages = storages
 
-    -- Remove old blips
     for _, blip in pairs(blips) do
         RemoveBlip(blip)
     end
     blips = {}
 
-    -- Create blips for owned storages
     for _, storage in ipairs(storages) do
         if storage.coords then
             local blip = AddBlipForCoord(storage.coords.x, storage.coords.y, storage.coords.z)
-            SetBlipSprite(blip, 500) -- Garage/storage icon
-            SetBlipColour(blip, 5) -- Yellow
+            SetBlipSprite(blip, 500) 
+            SetBlipColour(blip, 5) 
             SetBlipScale(blip, 0.7)
             SetBlipAsShortRange(blip, true)
             BeginTextCommandSetBlipName("STRING")
@@ -112,9 +104,7 @@ RegisterNetEvent('storages:client:receiveOwnedStorages', function(storages)
     end
 end)
 
--- Receive storages data and open UI
 RegisterNetEvent('storages:client:receiveStorages', function(data)
-    -- Update owned storages for markers
     local newOwned = {}
     for _, storage in ipairs(data.storages) do
         if storage.owner_citizenid == data.citizenid then
@@ -131,7 +121,6 @@ RegisterNetEvent('storages:client:receiveStorages', function(data)
     })
 end)
 
--- Receive auctions data
 RegisterNetEvent('storages:client:receiveAuctions', function(data)
     NUI.SendMessage('receiveAuctions', {
         auctions = data.auctions,
@@ -140,42 +129,35 @@ RegisterNetEvent('storages:client:receiveAuctions', function(data)
     })
 end)
 
--- Get storages
 RegisterNuiCallback('getStorages', function(_, cb)
     TriggerServerEvent('storages:server:getStorages')
     cb({ success = true })
 end)
 
--- Buy storage
 RegisterNuiCallback('buyStorage', function(data, cb)
     TriggerServerEvent('storages:server:buyStorage', data.storageId)
     cb({ success = true })
 end)
 
--- Create auction
 RegisterNuiCallback('createAuction', function(data, cb)
     TriggerServerEvent('storages:server:createAuction', data.storageId, data.startingPrice)
     cb({ success = true })
 end)
 
--- Get auctions
 RegisterNuiCallback('getAuctions', function(_, cb)
     TriggerServerEvent('storages:server:getAuctions')
     cb({ success = true })
 end)
 
--- Place bid
 RegisterNuiCallback('placeBid', function(data, cb)
     TriggerServerEvent('storages:server:placeBid', data.auctionId, data.bidAmount)
     cb({ success = true })
 end)
 
--- Open stash (triggered from server after ownership validation)
 RegisterNetEvent('storages:client:openStash', function(stashId)
     exports.ox_inventory:openInventory('stash', { id = stashId })
 end)
 
--- Marker thread for owned storages
 CreateThread(function()
     while true do
         local sleep = 1000
@@ -189,7 +171,6 @@ CreateThread(function()
                 if dist < Config.Marker.distance then
                     sleep = 0
 
-                    -- Draw marker
                     DrawMarker(
                         Config.Marker.type,
                         storage.coords.x, storage.coords.y, storage.coords.z,
@@ -200,12 +181,11 @@ CreateThread(function()
                     )
 
                     if dist < Config.InteractDistance then
-                        -- Show help text
                         BeginTextCommandDisplayHelp("STRING")
                         AddTextComponentSubstringPlayerName("Press ~INPUT_CONTEXT~ to open storage " .. storage.name)
                         EndTextCommandDisplayHelp(0, false, true, -1)
 
-                        if IsControlJustPressed(0, 38) then -- E key
+                        if IsControlJustPressed(0, 38) then 
                             TriggerServerEvent('storages:server:openStorage', storage.id)
                         end
                     end
@@ -217,7 +197,6 @@ CreateThread(function()
     end
 end)
 
--- Cleanup on resource stop
 AddEventHandler('onClientResourceStop', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
     
